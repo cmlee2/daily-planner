@@ -23,7 +23,7 @@ export function TaskList({ date }: TaskListProps) {
 
   return (
     <Card>
-      <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+      <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
         Tasks ({incomplete.length} remaining)
       </h3>
 
@@ -40,7 +40,7 @@ export function TaskList({ date }: TaskListProps) {
 
         {completed.length > 0 && (
           <details className="mt-3">
-            <summary className="cursor-pointer text-xs font-medium text-gray-400 hover:text-gray-600">
+            <summary className="cursor-pointer text-xs font-medium text-slate-500 hover:text-slate-300">
               {completed.length} completed
             </summary>
             <div className="mt-2 space-y-2">

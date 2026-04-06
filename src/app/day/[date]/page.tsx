@@ -6,6 +6,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addDays, subDays } from "date-fns";
 import { fromDateString, toDateString, todayString } from "@/lib/dates";
 import { TaskList } from "@/components/tasks/TaskList";
+import { TimeBlockGrid } from "@/components/timeblock/TimeBlockGrid";
+import { NoteEditor } from "@/components/notes/NoteEditor";
 import { Button } from "@/components/ui/Button";
 import type { DateString } from "@/types";
 
@@ -23,16 +25,16 @@ export default function DayPage({ params }: { params: Promise<{ date: string }> 
     <div className="mx-auto max-w-4xl p-4 md:p-8">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <button onClick={goPrev} className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+          <button onClick={goPrev} className="rounded-lg p-2 text-slate-400 hover:bg-slate-700 hover:text-slate-200">
             <ChevronLeft size={20} />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-slate-100">
               {format(dateObj, "EEEE, MMMM d")}
             </h1>
-            <p className="text-sm text-gray-500">{format(dateObj, "yyyy")}</p>
+            <p className="text-sm text-slate-500">{format(dateObj, "yyyy")}</p>
           </div>
-          <button onClick={goNext} className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+          <button onClick={goNext} className="rounded-lg p-2 text-slate-400 hover:bg-slate-700 hover:text-slate-200">
             <ChevronRight size={20} />
           </button>
         </div>
@@ -47,12 +49,8 @@ export default function DayPage({ params }: { params: Promise<{ date: string }> 
         <TaskList date={date} />
 
         <div className="space-y-6">
-          <div className="rounded-xl border border-dashed border-gray-300 bg-white p-6 text-center text-sm text-gray-400">
-            Time blocks — coming in Phase 2
-          </div>
-          <div className="rounded-xl border border-dashed border-gray-300 bg-white p-6 text-center text-sm text-gray-400">
-            Notes / Journal — coming in Phase 2
-          </div>
+          <TimeBlockGrid date={date} />
+          <NoteEditor date={date} />
         </div>
       </div>
     </div>

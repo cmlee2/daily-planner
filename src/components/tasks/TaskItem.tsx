@@ -14,8 +14,8 @@ interface TaskItemProps {
 }
 
 const priorityColors: Record<Priority, string> = {
-  low: "border-l-gray-300",
-  medium: "border-l-yellow-400",
+  low: "border-l-slate-500",
+  medium: "border-l-yellow-500",
   high: "border-l-red-500",
 };
 
@@ -33,12 +33,12 @@ export function TaskItem({ task, onToggle, onUpdate, onDelete }: TaskItemProps) 
   return (
     <div
       className={cn(
-        "group flex items-center gap-3 rounded-lg border border-gray-200 border-l-4 bg-white px-3 py-2.5 transition-colors hover:bg-gray-50",
+        "group flex items-center gap-3 rounded-lg border border-card-border border-l-4 bg-card px-3 py-2.5 transition-colors hover:bg-slate-700/50",
         priorityColors[task.priority],
         task.completed && "opacity-60"
       )}
     >
-      <GripVertical size={16} className="shrink-0 text-gray-300 opacity-0 group-hover:opacity-100 cursor-grab" />
+      <GripVertical size={16} className="shrink-0 text-slate-500 opacity-0 group-hover:opacity-100 cursor-grab" />
 
       <button
         onClick={() => onToggle(task.id)}
@@ -46,7 +46,7 @@ export function TaskItem({ task, onToggle, onUpdate, onDelete }: TaskItemProps) 
           "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
           task.completed
             ? "border-blue-500 bg-blue-500 text-white"
-            : "border-gray-300 hover:border-blue-400"
+            : "border-slate-500 hover:border-blue-400"
         )}
       >
         {task.completed && <Check size={12} />}
@@ -60,26 +60,26 @@ export function TaskItem({ task, onToggle, onUpdate, onDelete }: TaskItemProps) 
             autoFocus
             className="flex-1"
           />
-          <button type="submit" className="rounded p-1 text-green-600 hover:bg-green-50">
+          <button type="submit" className="rounded p-1 text-green-400 hover:bg-green-900/30">
             <Check size={16} />
           </button>
-          <button type="button" onClick={() => setEditing(false)} className="rounded p-1 text-gray-400 hover:bg-gray-100">
+          <button type="button" onClick={() => setEditing(false)} className="rounded p-1 text-slate-400 hover:bg-slate-700">
             <X size={16} />
           </button>
         </form>
       ) : (
         <>
           <span
-            className={cn("flex-1 text-sm", task.completed && "line-through text-gray-400")}
+            className={cn("flex-1 text-sm text-slate-200", task.completed && "line-through text-slate-500")}
             onDoubleClick={() => { setEditing(true); setEditTitle(task.title); }}
           >
             {task.title}
           </span>
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
-            <button onClick={() => { setEditing(true); setEditTitle(task.title); }} className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+            <button onClick={() => { setEditing(true); setEditTitle(task.title); }} className="rounded p-1 text-slate-400 hover:bg-slate-700 hover:text-slate-200">
               <Pencil size={14} />
             </button>
-            <button onClick={() => onDelete(task.id)} className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-500">
+            <button onClick={() => onDelete(task.id)} className="rounded p-1 text-slate-400 hover:bg-red-900/30 hover:text-red-400">
               <Trash2 size={14} />
             </button>
           </div>

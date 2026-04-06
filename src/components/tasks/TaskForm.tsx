@@ -32,7 +32,7 @@ export function TaskForm({ onAdd }: TaskFormProps) {
       <select
         value={priority}
         onChange={(e) => setPriority(e.target.value as Priority)}
-        className="rounded-lg border border-gray-300 px-2 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        className="rounded-lg border border-slate-600 bg-slate-800 px-2 py-2 text-sm text-slate-200 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
       >
         <option value="low">Low</option>
         <option value="medium">Med</option>

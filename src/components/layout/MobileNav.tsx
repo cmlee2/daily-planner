@@ -16,7 +16,7 @@ export function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 flex border-t border-gray-200 bg-white md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 flex border-t border-card-border bg-card md:hidden">
       {navItems.map((item) => {
         const isActive = item.href === "/"
           ? pathname === "/"
@@ -27,7 +27,7 @@ export function MobileNav() {
             href={item.href}
             className={cn(
               "flex flex-1 flex-col items-center gap-1 py-2 text-xs font-medium transition-colors",
-              isActive ? "text-blue-600" : "text-gray-500"
+              isActive ? "text-blue-400" : "text-slate-500"
             )}
           >
             <item.icon size={20} />
