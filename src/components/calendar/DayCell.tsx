@@ -22,7 +22,7 @@ export function DayCell({ date, currentMonth, selectedDate, taskCount, hasTimeBl
     <button
       onClick={() => onClick(date)}
       className={cn(
-        "flex h-20 flex-col items-start rounded-lg border p-1.5 text-left transition-colors",
+        "flex h-14 md:h-20 flex-col items-start rounded-lg border p-1 md:p-1.5 text-left transition-colors",
         currentMonth ? "border-card-border bg-card" : "border-transparent bg-transparent opacity-40",
         today && "border-blue-500/50",
         selected && "ring-2 ring-blue-500",
@@ -38,11 +38,14 @@ export function DayCell({ date, currentMonth, selectedDate, taskCount, hasTimeBl
         {date.getDate()}
       </span>
 
-      <div className="mt-auto flex flex-wrap gap-1">
+      <div className="mt-auto flex flex-wrap gap-0.5 md:gap-1">
         {taskCount > 0 && (
-          <span className="flex h-4 items-center rounded bg-blue-500/20 px-1 text-[10px] font-medium text-blue-400">
+          <span className="hidden md:flex h-4 items-center rounded bg-blue-500/20 px-1 text-[10px] font-medium text-blue-400">
             {taskCount} task{taskCount !== 1 ? "s" : ""}
           </span>
+        )}
+        {taskCount > 0 && (
+          <span className="md:hidden h-2 w-2 rounded-full bg-blue-400" />
         )}
         {hasTimeBlocks && (
           <span className="h-2 w-2 rounded-full bg-purple-400" />

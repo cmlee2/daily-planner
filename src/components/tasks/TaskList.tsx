@@ -28,6 +28,12 @@ export function TaskList({ date }: TaskListProps) {
       </h3>
 
       <div className="space-y-2">
+        {incomplete.length === 0 && completed.length === 0 && (
+          <div className="py-6 text-center">
+            <p className="text-sm text-slate-500">No tasks for this day yet.</p>
+            <p className="mt-1 text-xs text-slate-600">Use the form below to add your first task.</p>
+          </div>
+        )}
         {incomplete.map((task) => (
           <TaskItem
             key={task.id}

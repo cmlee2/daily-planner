@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Calendar, Dumbbell, Target, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Calendar, Dumbbell, Target, Settings, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +37,7 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1 p-2">
         {navItems.map((item) => {
           const isActive = item.href === "/"
-            ? pathname === "/"
+            ? pathname === "/" || pathname.startsWith("/day")
             : pathname.startsWith(item.href);
           return (
             <Link
@@ -56,6 +56,21 @@ export function Sidebar() {
           );
         })}
       </nav>
+
+      <div className="border-t border-card-border p-2">
+        <Link
+          href="/settings"
+          className={cn(
+            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+            pathname === "/settings"
+              ? "bg-blue-500/10 text-blue-400"
+              : "text-slate-400 hover:bg-slate-700/50 hover:text-slate-200"
+          )}
+        >
+          <Settings size={20} />
+          {!collapsed && <span>Settings</span>}
+        </Link>
+      </div>
     </aside>
   );
 }

@@ -23,18 +23,19 @@ export default function DayPage({ params }: { params: Promise<{ date: string }> 
 
   return (
     <div className="mx-auto max-w-4xl p-4 md:p-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <button onClick={goPrev} className="rounded-lg p-2 text-slate-400 hover:bg-slate-700 hover:text-slate-200">
+      <div className="mb-6 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 md:gap-3 min-w-0">
+          <button onClick={goPrev} className="shrink-0 rounded-lg p-1.5 md:p-2 text-slate-400 hover:bg-slate-700 hover:text-slate-200">
             <ChevronLeft size={20} />
           </button>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-100">
-              {format(dateObj, "EEEE, MMMM d")}
+          <div className="min-w-0">
+            <h1 className="truncate text-lg md:text-2xl font-bold text-slate-100">
+              {format(dateObj, "EEE, MMM d")}
+              <span className="hidden md:inline">{format(dateObj, "EEEE, MMMM d").replace(format(dateObj, "EEE, MMM d"), "")}</span>
             </h1>
             <p className="text-sm text-slate-500">{format(dateObj, "yyyy")}</p>
           </div>
-          <button onClick={goNext} className="rounded-lg p-2 text-slate-400 hover:bg-slate-700 hover:text-slate-200">
+          <button onClick={goNext} className="shrink-0 rounded-lg p-1.5 md:p-2 text-slate-400 hover:bg-slate-700 hover:text-slate-200">
             <ChevronRight size={20} />
           </button>
         </div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Calendar, Dumbbell, Target } from "lucide-react";
+import { LayoutDashboard, Calendar, Dumbbell, Target, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { href: "/calendar", label: "Calendar", icon: Calendar },
   { href: "/workouts", label: "Workouts", icon: Dumbbell },
   { href: "/goals", label: "Goals", icon: Target },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function MobileNav() {
@@ -19,7 +20,7 @@ export function MobileNav() {
     <nav className="fixed bottom-0 left-0 right-0 z-40 flex border-t border-card-border bg-card md:hidden">
       {navItems.map((item) => {
         const isActive = item.href === "/"
-          ? pathname === "/"
+          ? pathname === "/" || pathname.startsWith("/day")
           : pathname.startsWith(item.href);
         return (
           <Link

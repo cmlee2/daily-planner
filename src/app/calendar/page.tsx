@@ -49,7 +49,7 @@ export default function CalendarPage() {
         </Button>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_320px]" style={{ gridAutoFlow: "dense" }}>
         {/* Month grid */}
         <Card>
           <div className="mb-4 flex items-center justify-between">
