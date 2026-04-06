@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addDays, subDays } from "date-fns";
 import { fromDateString, toDateString, todayString } from "@/lib/dates";
 import { WorkoutLog } from "@/components/workouts/WorkoutLog";
+import { CardioLog } from "@/components/workouts/CardioLog";
 import { WeeklyWorkoutSummary } from "@/components/workouts/WeeklyWorkoutSummary";
 import { Button } from "@/components/ui/Button";
 
@@ -44,7 +45,10 @@ export default function WorkoutsPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <WorkoutLog date={selectedDate} />
+        <div className="space-y-6">
+          <WorkoutLog date={selectedDate} />
+          <CardioLog date={selectedDate} />
+        </div>
         <WeeklyWorkoutSummary referenceDate={dateObj} />
       </div>
     </div>

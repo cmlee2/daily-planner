@@ -22,6 +22,7 @@ export function WeeklyWorkoutSummary({ referenceDate }: WeeklyWorkoutSummaryProp
 
   const sessionMap = new Map(sessions.map((s) => [s.date, s]));
 
+  // Strength stats
   const totalExercises = sessions.reduce((sum, s) => sum + s.exercises.length, 0);
   const totalSets = sessions.reduce(
     (sum, s) => sum + s.exercises.reduce((es, ex) => es + ex.sets.length, 0),
@@ -37,6 +38,25 @@ export function WeeklyWorkoutSummary({ referenceDate }: WeeklyWorkoutSummaryProp
     0
   );
 
+  // Cardio stats
+  const totalCardioSessions = sessions.reduce((sum, s) => sum + (s.cardio?.length || 0), 0);
+  const totalCardioMinutes = sessions.reduce(
+    (sum, s) => sum + (s.cardio || []).reduce((cs, c) => cs + c.durationMinutes, 0),
+    0
+  );
+  const totalCardioDistance = sessions.reduce(
+    (sum, s) => sum + (s.cardio || []).reduce((cs, c) => cs + (c.distanceMiles || 0), 0),
+    0
+  );
+  const totalCardioCalories = sessions.reduce(
+    (sum, s) => sum + (s.cardio || []).reduce((cs, c) => cs + (c.calories || 0), 0),
+    0
+  );
+
+  const activeDays = sessions.filter(
+    (s) => s.exercises.length > 0 || (s.cardio?.length || 0) > 0
+  ).length;
+
   return (
     <Card>
       <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-400">
@@ -48,7 +68,9 @@ export function WeeklyWorkoutSummary({ referenceDate }: WeeklyWorkoutSummaryProp
         {days.map((day) => {
           const dateStr = toDateString(day);
           const session = sessionMap.get(dateStr);
-          const hasWorkout = session && session.exercises.length > 0;
+          const hasStrength = session && session.exercises.length > 0;
+          const hasCardio = session && (session.cardio?.length || 0) > 0;
+          const hasActivity = hasStrength || hasCardio;
           const isToday = dateStr === toDateString(new Date());
 
           return (
@@ -58,43 +80,80 @@ export function WeeklyWorkoutSummary({ referenceDate }: WeeklyWorkoutSummaryProp
               </span>
               <div
                 className={cn(
-                  "flex h-10 w-full items-center justify-center rounded-lg text-xs font-medium",
-                  hasWorkout
+                  "flex h-10 w-full flex-col items-center justify-center rounded-lg text-[10px] font-medium gap-0.5",
+                  hasActivity
                     ? "bg-green-500/20 text-green-400"
                     : "bg-slate-800 text-slate-600",
                   isToday && "ring-1 ring-blue-500/50"
                 )}
               >
-                {hasWorkout ? session.exercises.length : "—"}
+                {hasActivity ? (
+                  <>
+                    {hasStrength && <span>{session!.exercises.length} str</span>}
+                    {hasCardio && <span>{session!.cardio.length} crd</span>}
+                  </>
+                ) : (
+                  "—"
+                )}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-lg bg-slate-800 p-3 text-center">
-          <p className="text-lg font-bold text-slate-200">{sessions.length}</p>
-          <p className="text-xs text-slate-500">Workouts</p>
-        </div>
-        <div className="rounded-lg bg-slate-800 p-3 text-center">
-          <p className="text-lg font-bold text-slate-200">{totalExercises}</p>
-          <p className="text-xs text-slate-500">Exercises</p>
-        </div>
-        <div className="rounded-lg bg-slate-800 p-3 text-center">
-          <p className="text-lg font-bold text-slate-200">{totalSets}</p>
-          <p className="text-xs text-slate-500">Sets</p>
-        </div>
-      </div>
-
-      {totalVolume > 0 && (
-        <p className="mt-3 text-center text-sm text-slate-400">
-          Total volume: <span className="font-medium text-slate-300">{totalVolume.toLocaleString()}</span> lbs
-        </p>
+      {/* Strength stats */}
+      {totalExercises > 0 && (
+        <>
+          <h4 className="mb-2 text-xs font-semibold uppercase text-slate-500">Strength</h4>
+          <div className="mb-4 grid grid-cols-3 gap-3">
+            <div className="rounded-lg bg-slate-800 p-3 text-center">
+              <p className="text-lg font-bold text-slate-200">{totalExercises}</p>
+              <p className="text-xs text-slate-500">Exercises</p>
+            </div>
+            <div className="rounded-lg bg-slate-800 p-3 text-center">
+              <p className="text-lg font-bold text-slate-200">{totalSets}</p>
+              <p className="text-xs text-slate-500">Sets</p>
+            </div>
+            <div className="rounded-lg bg-slate-800 p-3 text-center">
+              <p className="text-lg font-bold text-slate-200">{totalVolume > 0 ? `${(totalVolume / 1000).toFixed(1)}k` : "0"}</p>
+              <p className="text-xs text-slate-500">Volume (lbs)</p>
+            </div>
+          </div>
+        </>
       )}
 
-      {sessions.length === 0 && (
+      {/* Cardio stats */}
+      {totalCardioSessions > 0 && (
+        <>
+          <h4 className="mb-2 text-xs font-semibold uppercase text-slate-500">Cardio</h4>
+          <div className="mb-4 grid grid-cols-3 gap-3">
+            <div className="rounded-lg bg-slate-800 p-3 text-center">
+              <p className="text-lg font-bold text-slate-200">{totalCardioSessions}</p>
+              <p className="text-xs text-slate-500">Sessions</p>
+            </div>
+            <div className="rounded-lg bg-slate-800 p-3 text-center">
+              <p className="text-lg font-bold text-slate-200">{totalCardioMinutes}</p>
+              <p className="text-xs text-slate-500">Minutes</p>
+            </div>
+            <div className="rounded-lg bg-slate-800 p-3 text-center">
+              <p className="text-lg font-bold text-slate-200">{totalCardioDistance > 0 ? totalCardioDistance.toFixed(1) : "0"}</p>
+              <p className="text-xs text-slate-500">Miles</p>
+            </div>
+          </div>
+          {totalCardioCalories > 0 && (
+            <p className="mb-2 text-center text-sm text-slate-400">
+              <span className="font-medium text-slate-300">{totalCardioCalories.toLocaleString()}</span> calories burned
+            </p>
+          )}
+        </>
+      )}
+
+      {/* Overall */}
+      <div className="border-t border-card-border pt-3 text-center text-sm text-slate-400">
+        <span className="font-medium text-slate-300">{activeDays}</span> active day{activeDays !== 1 ? "s" : ""} this week
+      </div>
+
+      {activeDays === 0 && (
         <p className="mt-2 text-center text-sm text-slate-500">
           No workouts logged this week yet.
         </p>

@@ -52,10 +52,23 @@ export interface Exercise {
   sets: ExerciseSet[];
 }
 
+export type CardioType = "run" | "bike" | "swim" | "row" | "elliptical" | "walk" | "hike" | "other";
+
+export interface CardioEntry {
+  id: ID;
+  type: CardioType;
+  label?: string;
+  durationMinutes: number;
+  distanceMiles?: number;
+  calories?: number;
+  notes?: string;
+}
+
 export interface WorkoutSession {
   id: ID;
   date: DateString;
   exercises: Exercise[];
+  cardio: CardioEntry[];
   durationMinutes?: number;
   notes?: string;
 }

@@ -1,14 +1,20 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useLocalStorage } from "./useLocalStorage";
 import { generateId } from "@/lib/utils";
-import type { WorkoutSession, Exercise, ExerciseSet, DateString } from "@/types";
+import type { WorkoutSession, Exercise, ExerciseSet, CardioEntry, CardioType, DateString } from "@/types";
 
 const STORAGE_KEY = "dp_workouts";
 
+// Ensure backward compat: old sessions may lack `cardio` field
+function normalize(session: WorkoutSession): WorkoutSession {
+  return { ...session, cardio: session.cardio || [] };
+}
+
 export function useWorkouts() {
-  const [workouts, setWorkouts] = useLocalStorage<WorkoutSession[]>(STORAGE_KEY, []);
+  const [rawWorkouts, setWorkouts] = useLocalStorage<WorkoutSession[]>(STORAGE_KEY, []);
+  const workouts = useMemo(() => rawWorkouts.map(normalize), [rawWorkouts]);
 
   const getSessionByDate = useCallback(
     (date: DateString) => workouts.find((w) => w.date === date) || null,
@@ -31,6 +37,7 @@ export function useWorkouts() {
         id: generateId(),
         date,
         exercises: [],
+        cardio: [],
       };
       setWorkouts((prev) => [...prev, session]);
       return session;
@@ -46,13 +53,13 @@ export function useWorkouts() {
         if (existing) {
           return prev.map((w) =>
             w.date === date
-              ? { ...w, exercises: [...w.exercises, exercise] }
+              ? { ...w, exercises: [...(w.exercises || []), exercise] }
               : w
           );
         }
         return [
           ...prev,
-          { id: generateId(), date, exercises: [exercise] },
+          { id: generateId(), date, exercises: [exercise], cardio: [] },
         ];
       });
     },
@@ -90,6 +97,48 @@ export function useWorkouts() {
     [setWorkouts]
   );
 
+  const addCardio = useCallback(
+    (date: DateString, type: CardioType, durationMinutes: number, distanceMiles?: number, calories?: number, label?: string, notes?: string) => {
+      const entry: CardioEntry = {
+        id: generateId(),
+        type,
+        label,
+        durationMinutes,
+        distanceMiles,
+        calories,
+        notes,
+      };
+      setWorkouts((prev) => {
+        const existing = prev.find((w) => w.date === date);
+        if (existing) {
+          return prev.map((w) =>
+            w.date === date
+              ? { ...w, cardio: [...(w.cardio || []), entry] }
+              : w
+          );
+        }
+        return [
+          ...prev,
+          { id: generateId(), date, exercises: [], cardio: [entry] },
+        ];
+      });
+    },
+    [setWorkouts]
+  );
+
+  const deleteCardio = useCallback(
+    (date: DateString, cardioId: string) => {
+      setWorkouts((prev) =>
+        prev.map((w) =>
+          w.date === date
+            ? { ...w, cardio: (w.cardio || []).filter((c) => c.id !== cardioId) }
+            : w
+        )
+      );
+    },
+    [setWorkouts]
+  );
+
   const updateSessionNotes = useCallback(
     (date: DateString, notes: string) => {
       setWorkouts((prev) =>
@@ -107,6 +156,8 @@ export function useWorkouts() {
     addExercise,
     updateExercise,
     deleteExercise,
+    addCardio,
+    deleteCardio,
     updateSessionNotes,
   };
 }
