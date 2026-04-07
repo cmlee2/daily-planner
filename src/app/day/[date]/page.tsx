@@ -30,8 +30,8 @@ export default function DayPage({ params }: { params: Promise<{ date: string }> 
           </button>
           <div className="min-w-0">
             <h1 className="truncate text-lg md:text-2xl font-bold text-slate-100">
-              {format(dateObj, "EEE, MMM d")}
-              <span className="hidden md:inline">{format(dateObj, "EEEE, MMMM d").replace(format(dateObj, "EEE, MMM d"), "")}</span>
+              <span className="md:hidden">{format(dateObj, "EEE, MMM d")}</span>
+              <span className="hidden md:inline">{format(dateObj, "EEEE, MMMM d")}</span>
             </h1>
             <p className="text-sm text-slate-500">{format(dateObj, "yyyy")}</p>
           </div>
