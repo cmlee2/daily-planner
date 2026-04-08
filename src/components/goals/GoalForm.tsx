@@ -10,7 +10,7 @@ interface GoalFormProps {
   onAdd: (
     title: string,
     timeframe: GoalTimeframe,
-    options?: { description?: string; targetValue?: number; unit?: string; targetDate?: string }
+    options?: { description?: string; targetValue?: number; unit?: string; targetDate?: string; repeating?: boolean }
   ) => void;
   onCancel?: () => void;
 }
@@ -23,6 +23,7 @@ export function GoalForm({ defaultTimeframe, onAdd, onCancel }: GoalFormProps) {
   const [targetValue, setTargetValue] = useState("");
   const [unit, setUnit] = useState("");
   const [targetDate, setTargetDate] = useState("");
+  const [repeating, setRepeating] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +33,7 @@ export function GoalForm({ defaultTimeframe, onAdd, onCancel }: GoalFormProps) {
       targetValue: hasTarget && targetValue ? Number(targetValue) : undefined,
       unit: hasTarget && unit.trim() ? unit.trim() : undefined,
       targetDate: targetDate || undefined,
+      repeating,
     });
     setTitle("");
     setDescription("");
@@ -39,6 +41,7 @@ export function GoalForm({ defaultTimeframe, onAdd, onCancel }: GoalFormProps) {
     setUnit("");
     setTargetDate("");
     setHasTarget(false);
+    setRepeating(false);
   };
 
   return (
@@ -81,7 +84,7 @@ export function GoalForm({ defaultTimeframe, onAdd, onCancel }: GoalFormProps) {
         </div>
       </div>
 
-      <div>
+      <div className="flex flex-wrap gap-4">
         <label className="flex items-center gap-2 text-sm text-slate-400">
           <input
             type="checkbox"
@@ -91,6 +94,17 @@ export function GoalForm({ defaultTimeframe, onAdd, onCancel }: GoalFormProps) {
           />
           Track with a numeric target
         </label>
+        {(timeframe === "daily" || timeframe === "weekly") && (
+          <label className="flex items-center gap-2 text-sm text-slate-400">
+            <input
+              type="checkbox"
+              checked={repeating}
+              onChange={(e) => setRepeating(e.target.checked)}
+              className="rounded border-slate-600"
+            />
+            Repeat each {timeframe === "daily" ? "day" : "week"}
+          </label>
+        )}
       </div>
 
       {hasTarget && (

@@ -16,6 +16,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Daily Planner",
   description: "Personal daily planner with tasks, calendar, workouts, and goals",
+  manifest: "/manifest.json",
+  themeColor: "#0f172a",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Planner",
+  },
 };
 
 export default function RootLayout({

@@ -1,14 +1,52 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useLocalStorage } from "./useLocalStorage";
 import { generateId } from "@/lib/utils";
+import { todayString, toDateString, startOfWeek } from "@/lib/dates";
 import type { Goal, GoalTimeframe, DateString } from "@/types";
 
 const STORAGE_KEY = "dp_goals";
 
+function getResetDateForTimeframe(timeframe: GoalTimeframe): DateString {
+  const now = new Date();
+  if (timeframe === "daily") return todayString();
+  if (timeframe === "weekly") return toDateString(startOfWeek(now, { weekStartsOn: 1 }));
+  // monthly/yearly goals don't auto-reset
+  return todayString();
+}
+
+function needsReset(goal: Goal): boolean {
+  if (!goal.repeating || !goal.completed) return false;
+  if (goal.timeframe !== "daily" && goal.timeframe !== "weekly") return false;
+  const currentPeriod = getResetDateForTimeframe(goal.timeframe);
+  return !goal.lastResetDate || goal.lastResetDate < currentPeriod;
+}
+
 export function useGoals() {
   const [goals, setGoals] = useLocalStorage<Goal[]>(STORAGE_KEY, []);
+  const hasResetRef = useRef(false);
+
+  // Auto-reset repeating goals at the start of each new period
+  useEffect(() => {
+    if (hasResetRef.current) return;
+    const toReset = goals.filter(needsReset);
+    if (toReset.length === 0) return;
+    hasResetRef.current = true;
+    const resetIds = new Set(toReset.map((g) => g.id));
+    setGoals((prev) =>
+      prev.map((g) => {
+        if (!resetIds.has(g.id)) return g;
+        return {
+          ...g,
+          completed: false,
+          currentValue: 0,
+          lastResetDate: getResetDateForTimeframe(g.timeframe),
+          updatedAt: new Date().toISOString(),
+        };
+      })
+    );
+  }, [goals, setGoals]);
 
   const getGoalsByTimeframe = useCallback(
     (timeframe: GoalTimeframe) =>
@@ -30,6 +68,7 @@ export function useGoals() {
         targetValue?: number;
         unit?: string;
         targetDate?: DateString;
+        repeating?: boolean;
       }
     ) => {
       const goal: Goal = {
@@ -41,6 +80,8 @@ export function useGoals() {
         currentValue: 0,
         unit: options?.unit,
         targetDate: options?.targetDate,
+        repeating: options?.repeating || false,
+        lastResetDate: getResetDateForTimeframe(timeframe),
         completed: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -68,7 +109,13 @@ export function useGoals() {
         prev.map((g) => {
           if (g.id !== id) return g;
           const completed = g.targetValue != null && currentValue >= g.targetValue;
-          return { ...g, currentValue, completed, updatedAt: new Date().toISOString() };
+          return {
+            ...g,
+            currentValue,
+            completed,
+            lastResetDate: completed ? getResetDateForTimeframe(g.timeframe) : g.lastResetDate,
+            updatedAt: new Date().toISOString(),
+          };
         })
       );
     },
@@ -78,9 +125,16 @@ export function useGoals() {
   const toggleGoal = useCallback(
     (id: string) => {
       setGoals((prev) =>
-        prev.map((g) =>
-          g.id === id ? { ...g, completed: !g.completed, updatedAt: new Date().toISOString() } : g
-        )
+        prev.map((g) => {
+          if (g.id !== id) return g;
+          const nowCompleted = !g.completed;
+          return {
+            ...g,
+            completed: nowCompleted,
+            lastResetDate: nowCompleted ? getResetDateForTimeframe(g.timeframe) : g.lastResetDate,
+            updatedAt: new Date().toISOString(),
+          };
+        })
       );
     },
     [setGoals]

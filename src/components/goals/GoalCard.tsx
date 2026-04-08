@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Trash2, Minus, Plus, Target } from "lucide-react";
+import { Check, Trash2, Minus, Plus, Target, Repeat } from "lucide-react";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { cn } from "@/lib/utils";
 import type { Goal } from "@/types";
@@ -41,6 +41,11 @@ export function GoalCard({ goal, onToggle, onUpdateProgress, onDelete }: GoalCar
           <div>
             <p className={cn("text-sm font-medium text-slate-200", goal.completed && "line-through text-slate-500")}>
               {goal.title}
+              {goal.repeating && (
+                <span className="ml-1.5 inline-flex items-center text-blue-400" title="Repeating goal">
+                  <Repeat size={12} />
+                </span>
+              )}
             </p>
             {goal.description && (
               <p className="mt-0.5 text-xs text-slate-500">{goal.description}</p>

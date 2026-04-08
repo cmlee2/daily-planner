@@ -84,6 +84,8 @@ export interface Goal {
   currentValue: number;
   unit?: string;
   completed: boolean;
+  repeating?: boolean;
+  lastResetDate?: DateString;
   createdAt: string;
   updatedAt: string;
 }
